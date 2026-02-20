@@ -1,0 +1,6 @@
+@Custom_Authentication_Authorization_API_HostAddress = http://localhost:5207
+
+GET {{Custom_Authentication_Authorization_API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
