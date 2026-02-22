@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -25,6 +26,16 @@ namespace Custom_Authentication_Authorization_API.Extensions
                             Encoding.UTF8.GetBytes(configuration["AppSettings:Token"]!))
                     };
                 });
+
+            // 🔥 Add Role-based Authorization Policies
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy =>
+                    policy.RequireRole("Admin"));   // শুধু Admin access পাবে
+
+                options.AddPolicy("UserOnly", policy =>
+                    policy.RequireRole("User"));    // শুধু User access পাবে
+            });
 
             return services;
         }

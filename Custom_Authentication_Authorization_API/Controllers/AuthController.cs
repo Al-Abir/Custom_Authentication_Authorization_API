@@ -23,7 +23,7 @@ namespace Custom_Authentication_Authorization_API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(UserDto request)
         {
-           var user = await authService.ReagisterAsync(request);
+           var user = await authService.RegisterAsync(request);
             if (user == null) {
                 return BadRequest("User Name Already Exists");
             }
