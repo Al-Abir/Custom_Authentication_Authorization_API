@@ -23,46 +23,34 @@ namespace Custom_Authentication_Authorization_API.Services
         }
 
         // 🔐 REGISTER
-        public async Task<User?> RegisterAsync(UserDto request)
+        public async Task<UserResponseDto?> RegisterAsync(RegisterDto request)
         {
             if (await _context.Users.AnyAsync(u => u.Username == request.Username))
                 return null;
 
-            // 🔥 Seed Roles if empty
-            if (!await _context.Roles.AnyAsync())
-            {
-                _context.Roles.AddRange(
-                    new Role { Name = "Admin" },
-                    new Role { Name = "User" }
-                );
-
-                await _context.SaveChangesAsync();
-            }
-
-            // 🔥 Decide Role
-            string roleName = request.Username == "manager@gmail.com"
-                ? "Admin"
-                : "User";
-
             var role = await _context.Roles
-                .FirstOrDefaultAsync(r => r.Name == roleName);
+                .FirstOrDefaultAsync(r => r.Name == "User");
 
             if (role is null)
                 return null;
 
             var user = new User();
 
-            var hashPassword = new PasswordHasher<User>()
+            user.Username = request.Username;
+            user.PasswordHash = new PasswordHasher<User>()
                 .HashPassword(user, request.Password);
 
-            user.Username = request.Username;
-            user.PasswordHash = hashPassword;
             user.RoleId = role.Id;
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            return new UserResponseDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                RoleName = role.Name
+            };
         }
 
         // 🔐 LOGIN

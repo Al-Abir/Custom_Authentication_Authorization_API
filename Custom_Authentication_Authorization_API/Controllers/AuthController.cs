@@ -21,15 +21,14 @@ namespace Custom_Authentication_Authorization_API.Controllers
 
         public static User user = new User();
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserDto request)
+        public async Task<ActionResult<UserResponseDto>> Register(RegisterDto request)
         {
-           var user = await authService.RegisterAsync(request);
-            if (user == null) {
+            var user = await authService.RegisterAsync(request);
+
+            if (user == null)
                 return BadRequest("User Name Already Exists");
-            }
 
             return Ok(user);
-
         }
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(UserDto request)
@@ -43,13 +42,25 @@ namespace Custom_Authentication_Authorization_API.Controllers
         }
 
         [Authorize]
-         [HttpGet]
+        [HttpGet]
         
         public IActionResult AuthticatedOnlyEndPoint()
         {
              return Ok("You are authenticted");
         }
-        
-      
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("admin-only")]
+        public IActionResult AdminOnly()
+        {
+            return Ok("Only Admin can access this endpoint");
+        }
+
+        [Authorize(Roles = "Admin,User")]
+        [HttpGet("admin-or-user")]
+        public IActionResult AdminOrUser()
+        {
+            return Ok("Admin and User both can access");
+        }
     }
 }

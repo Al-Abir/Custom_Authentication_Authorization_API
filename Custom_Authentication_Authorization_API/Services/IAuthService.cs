@@ -6,7 +6,7 @@ namespace Custom_Authentication_Authorization_API.Services
     public interface IAuthService
     {
 
-        Task<User?> RegisterAsync(UserDto request);
+        Task<UserResponseDto?> RegisterAsync(RegisterDto request);
         Task<string?> LoginAsync(UserDto request);
     }
 }
